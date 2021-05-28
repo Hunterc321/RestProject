@@ -7,7 +7,7 @@ public interface UserEntityService {
     List<UserEntity> getUsers();
 
 
-    void addNewUser(UserEntity userEntity);
+    void addNewUser(UserEntity userEntity) throws IllegalArgumentException;
 
     void deleteUser(Long id);
 

@@ -1,7 +1,10 @@
 package com.example.bytex.user;
 
+import com.example.bytex.exception.ApiRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,12 +23,18 @@ public class UserEntityServiceImpl implements UserEntityService {
     @Override
     public List<UserEntity> getUsers() {
         return userEntityRepository.findAll();
-
     }
 
     @Override
-    public void addNewUser(UserEntity userEntity) {
-        userEntityRepository.save(userEntity);
+    public void addNewUser(UserEntity userEntity) throws IllegalArgumentException {
+            try
+            {
+                userEntityRepository.save(userEntity);
+            }catch (InvalidDataAccessApiUsageException e)
+            {
+                throw new ApiRequestException("Data that is send is null", HttpStatus.BAD_REQUEST);
+            }
+
     }
 
     @Override
@@ -38,7 +47,7 @@ public class UserEntityServiceImpl implements UserEntityService {
         }
         else
         {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "User with id "+ id + " doesnt exist");
+            throw new ApiRequestException("User with id "+ id + " doesnt exist", HttpStatus.NO_CONTENT);
         }
 
 
@@ -54,7 +63,7 @@ public class UserEntityServiceImpl implements UserEntityService {
 
                     return userEntityRepository.save(user);
                 }).orElseThrow( () -> {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " Not Found");
+                    throw new ApiRequestException( "User with id " + userId + " Not Found", HttpStatus.NOT_FOUND);
                 }
         );
 

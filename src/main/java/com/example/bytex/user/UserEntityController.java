@@ -1,5 +1,6 @@
 package com.example.bytex.user;
 
+import com.example.bytex.exception.ApiRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,20 +24,20 @@ public class UserEntityController {
     public ResponseEntity<List<UserEntity>> getUsers(){
         List<UserEntity> allUsers = userEntityService.getUsers();
 
-        if(allUsers.size() != 0)
+        if(!allUsers.isEmpty())
         {
             return new ResponseEntity<>(allUsers, HttpStatus.OK);
         }
 
-        throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nothing to show");
+        throw new ApiRequestException("No users", HttpStatus.BAD_REQUEST);
 
 
     }
 
     @PostMapping
-    public ResponseEntity<List<UserEntity>> addNewUser(@RequestBody UserEntity userEntity)
+    public ResponseEntity<List<UserEntity>> addNewUser(@RequestBody(required = false) UserEntity userEntity)
     {
-        userEntityService.addNewUser(userEntity);
+            userEntityService.addNewUser(userEntity);
         return new ResponseEntity<>(userEntityService.getUsers(), HttpStatus.OK);
     }
 
