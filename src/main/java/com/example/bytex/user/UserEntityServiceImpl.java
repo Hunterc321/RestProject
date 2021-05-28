@@ -26,13 +26,13 @@ public class UserEntityServiceImpl implements UserEntityService {
     }
 
     @Override
-    public void addNewUser(UserEntity userEntity) throws IllegalArgumentException {
+    public void addNewUser(UserEntity userEntity) throws InvalidDataAccessApiUsageException {
             try
             {
                 userEntityRepository.save(userEntity);
             }catch (InvalidDataAccessApiUsageException e)
             {
-                throw new ApiRequestException("Data that is send is null", HttpStatus.BAD_REQUEST);
+                throw new ApiRequestException("Data send is null", HttpStatus.BAD_REQUEST);
             }
 
     }

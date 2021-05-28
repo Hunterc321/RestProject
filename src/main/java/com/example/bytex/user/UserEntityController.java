@@ -4,6 +4,7 @@ import com.example.bytex.exception.ApiRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,41 +22,41 @@ public class UserEntityController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserEntity>> getUsers(){
+    public ResponseEntity<List<UserEntity>> getUsers() {
         List<UserEntity> allUsers = userEntityService.getUsers();
 
-        if(!allUsers.isEmpty())
-        {
+        if (!allUsers.isEmpty()) {
             return new ResponseEntity<>(allUsers, HttpStatus.OK);
         }
 
         throw new ApiRequestException("No users", HttpStatus.BAD_REQUEST);
 
-
     }
 
     @PostMapping
-    public ResponseEntity<List<UserEntity>> addNewUser(@RequestBody(required = false) UserEntity userEntity)
-    {
+    public ResponseEntity<List<UserEntity>> addNewUser(@RequestBody(required = false) UserEntity userEntity) {
+        try
+        {
             userEntityService.addNewUser(userEntity);
+        }catch (Exception e)
+        {
+            throw new ApiRequestException("Data is null", HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(userEntityService.getUsers(), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "{userId}")
-    public List<UserEntity> deleteUser(@PathVariable("userId") Long id){
+    public List<UserEntity> deleteUser(@PathVariable("userId") Long id) {
         userEntityService.deleteUser(id);
         return userEntityService.getUsers();
     }
 
     @PutMapping(path = "{userId}")
     public ResponseEntity<List<UserEntity>> updateUser(@PathVariable("userId") Long userId,
-                                       @RequestBody UserEntity newUserEntity)
-    {
+                                                       @RequestBody UserEntity newUserEntity) {
         userEntityService.updateUser(userId, newUserEntity);
         return new ResponseEntity<>(userEntityService.getUsers(), HttpStatus.OK);
     }
-
-
 
 
 }

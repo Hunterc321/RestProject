@@ -1,17 +1,20 @@
 package com.example.bytex.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 @Table
+@JsonIgnoreProperties
 public class UserEntity {
     @Id
     @GeneratedValue
     private Long id;
     private String name;
     private int age;
-
     public UserEntity(String name, int age) {
         this.name = name;
         this.age = age;
